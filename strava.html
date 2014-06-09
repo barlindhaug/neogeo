@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>A Simple Map</title>
+<title>Breakfast rides</title>
 
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.3/mapbox.js'></script>
@@ -21,26 +21,34 @@
 <div id='map'></div>
 <script>
 var map = L.mapbox.map('map', 'camilleanne.2af55995')
-    .setView([59.911111, 10.733333], 13);
+    .setView([59.931111, 10.733333], 12);
 
-// D3 color scales are a factor of time of day (24 hr day)
-var cycleColor = d3.scale.linear()
-    .domain([0, 23])
-    .range(["#00BFFF", "#0000FF"]);
+var riders = [
+    {gpx: '2014-05-28_Lars_Frokost.gpx',
+     color: "#0000FF"},
+    {gpx:'2014-05-28_Ivar_Frokost.gpx',
+     color: "#FF0000"},
+    {gpx: '2014-05-28_Magnus_Frokost.gpx',
+     color: "#00FF00"}];
 
-// add gpx data to map, 
-// extract the time of origin for each trace 
+
+riders.forEach(function(rider) {
+    console.log(rider);
+    drawRoute(rider);
+});
+
+// add gpx data to map,
+// extract the time of origin for each trace
 // and apply color gradient
-var cycling = omnivore.gpx('2014-06-02_morning_ride.gpx')
-    .on('ready', function() {
-        for (var key in cycling._layers) {
-            var time = new Date(cycling._layers[key].feature.properties.time);
-            var hour = time.getHours();
-            var minute = time.getMinutes();
-            cycling._layers[key].setStyle({color: cycleColor(hour + ((minute/60) /1))});
-        }
-    })
-    .addTo(map);
+function drawRoute(rider) {
+    var cycling = omnivore.gpx(rider.gpx)
+        .on('ready', function() {
+            for (var key in cycling._layers) {
+                cycling._layers[key].setStyle({color: rider.color});
+            }
+        })
+        .addTo(map);
+}
 
 </script>
 </body>
